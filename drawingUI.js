@@ -140,6 +140,9 @@ function uiMousePressed () {
             if(mouseOverRect(725 + 180, 250, 90, 80) && elementInArray("shuttlenoweps", unlockedSpaceshipTypes) && elementInArray(chosenSpaceshipPower, unlockedSpaceshipPowers)) {
                 spaceshipConfiguration = {type: "shuttlenoweps", power: chosenSpaceshipPower}
             }
+            if(mouseOverRect(45, 32, 200, 60, "corner")) {
+                stage = "endless"
+            }
             break;
     }
 }
@@ -147,24 +150,24 @@ function uiMousePressed () {
 function uiMouseMoved() {
     switch(stage) {
         case "menu":
-        var mouseIsPointer = 
-        //Arrows
-        mouseOverRect(725 - 200, 150, 30, 40)
-        || mouseOverRect(725 + 200, 150, 30, 40)
-        //Checking for spaceship mouseover's
-        || mouseOverRect(725 - 180, 250, 100, 50)
-        || mouseOverRect(725 - 83, 250, 75, 50)
-        || mouseOverRect(725, 250, 75, 40)
-        || mouseOverRect(725 + 95, 250, 90, 80)
-        || mouseOverRect(725 + 180, 250, 50, 30)
-        //Side bar buttons
-        || mouseOverRect(45, 32, 200, 60, "corner")
-        || mouseOverRect(45, 107, 200, 60, "corner")
-        || mouseOverRect(45, 182, 200, 60, "corner")
-        || mouseOverRect(45, 257, 200, 60, "corner")
-        || mouseOverRect(45, 332, 200, 60, "corner")
-        || mouseOverRect(45, 407, 200, 60, "corner")
-        cursor(mouseIsPointer ? "pointer" : "default")
-        break;
+            var mouseIsPointer = 
+            //Arrows
+            mouseOverRect(725 - 200, 150, 30, 40)
+            || mouseOverRect(725 + 200, 150, 30, 40)
+            //Checking for spaceship mouseover's
+            || mouseOverRect(725 - 180, 250, 100, 50)
+            || mouseOverRect(725 - 83, 250, 75, 50)
+            || mouseOverRect(725, 250, 75, 40)
+            || mouseOverRect(725 + 95, 250, 90, 80)
+            || mouseOverRect(725 + 180, 250, 50, 30)
+            //Side bar buttons
+            || mouseOverRect(45, 32, 200, 60, "corner")
+            || mouseOverRect(45, 107, 200, 60, "corner")
+            || mouseOverRect(45, 182, 200, 60, "corner")
+            || mouseOverRect(45, 257, 200, 60, "corner")
+            || mouseOverRect(45, 332, 200, 60, "corner")
+            || mouseOverRect(45, 407, 200, 60, "corner")
+            cursor(mouseIsPointer ? "pointer" : "default")
+            break;
     }
 }

@@ -42,6 +42,8 @@ function draw() {
         case "menu":
             drawMenuUI()
             break;
+        case "endless":
+            drawEndless()
     }
 }
 
