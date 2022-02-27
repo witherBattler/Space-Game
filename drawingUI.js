@@ -7,7 +7,7 @@ var spaceshipPowersColors = {
     "Magma": "orangered",
     "Pink Plasma": "hotpink"
 }
-var unlockedSpaceshipPowers = ["Magma"]
+var unlockedSpaceshipPowers = ["Magma", "Pink Plasma"]
 
 var unlockedSpaceshipTypes = ["cargoship", "shuttlenoweps", "destroyer"]
 var allSpaceshipTypes = ["cargoship", "carrier", "cruiser", "destroyer", "shuttlenoweps"]
@@ -22,7 +22,14 @@ function drawMenuUI() {
     var alphaValue = mouseOverRect(145, height / 2, 270, 480) ? 75 : 50
     fill(color(255, 255, 255, alphaValue))
     rectMode(CENTER)
-    rect(145, height / 2, 270, 480, 30, 30, 30, 30)
+    noStroke()
+    rect(145, height / 2, 250, 460, 20, 20, 20, 20)
+    drawSideBarButton("Endless", 32)
+    drawSideBarButton("Levels", 107)
+    drawSideBarButton("Leaderboard", 182)
+    drawSideBarButton("Settings", 257)
+    drawSideBarButton("Tutorial", 332)
+    drawSideBarButton("Credits", 407)
     
     //Title
     fill("white")
@@ -73,6 +80,31 @@ function drawMenuUI() {
     var currentSpaceshipImage = getSpaceshipImage(spaceshipConfiguration.type, spaceshipConfiguration.power)
     image(currentSpaceshipImage, 600, 400, currentSpaceshipImage.width / 2, currentSpaceshipImage.height / 2)
 
+    
+    var stats = getSpaceshipStatistics(spaceshipConfiguration.type, spaceshipConfiguration.power)
+    noStroke()
+    rectMode(CORNER)
+    textAlign(LEFT)
+
+    fill("lightblue")
+    rect(750, 300 + 50, stats.speed / 20 * 400, 20)
+    text("Speed", 760 + stats.speed / 20 * 400, 315 + 50)
+
+    fill("red")
+    rect(750, 320 + 50, stats.bulletDamage / 100 * 400, 20)
+    text("Bullet Damage", 760 + stats.bulletDamage / 100 * 400, 336 + 50)
+
+    fill("lightgreen")
+    rect(750, 340 + 50, stats.bulletSpeed / 30 * 400, 20)
+    text("Bullet Speed", 760 + stats.bulletSpeed / 30 * 400, 356 + 50)
+
+    fill("blue")
+    rect(750, 360 + 50, stats.protectionLevel / 5 * 400, 20)
+    text("Protection", 760 + stats.protectionLevel / 5 * 400, 376 + 50)
+
+    fill("pink")
+    rect(750, 380 + 50, stats.reloadTime / 120 * 400, 20)
+    text("Reload Time", 760 + stats.reloadTime / 120 * 400, 396 + 50)
 }
 
 function drawStarBackground() {
@@ -115,13 +147,23 @@ function uiMousePressed () {
 function uiMouseMoved() {
     switch(stage) {
         case "menu":
-        var mouseIsPointer = mouseOverRect(725 - 200, 150, 30, 40) || mouseOverRect(725 + 200, 150, 30, 40)
+        var mouseIsPointer = 
+        //Arrows
+        mouseOverRect(725 - 200, 150, 30, 40)
+        || mouseOverRect(725 + 200, 150, 30, 40)
         //Checking for spaceship mouseover's
         || mouseOverRect(725 - 180, 250, 100, 50)
         || mouseOverRect(725 - 83, 250, 75, 50)
         || mouseOverRect(725, 250, 75, 40)
         || mouseOverRect(725 + 95, 250, 90, 80)
         || mouseOverRect(725 + 180, 250, 50, 30)
+        //Side bar buttons
+        || mouseOverRect(45, 32, 200, 60, "corner")
+        || mouseOverRect(45, 107, 200, 60, "corner")
+        || mouseOverRect(45, 182, 200, 60, "corner")
+        || mouseOverRect(45, 257, 200, 60, "corner")
+        || mouseOverRect(45, 332, 200, 60, "corner")
+        || mouseOverRect(45, 407, 200, 60, "corner")
         cursor(mouseIsPointer ? "pointer" : "default")
         break;
     }
