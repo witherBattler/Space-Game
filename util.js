@@ -214,3 +214,25 @@ function drawMapGui() {
 function roundToNearest(toRound, roundTo) {
     return Math.round(toRound / roundTo) * roundTo;
 }
+
+function manageBulletCreation() {
+    if(keyIsDown(32)){
+        attemptBulletCreation()
+    }
+}
+
+function attemptBulletCreation() {
+    if(Math.abs(lastBulletFrame - frameCount) > spaceshipStatistics.reloadTime) {
+        createBullet(spaceshipSprite.position.x, spaceshipSprite.position.y, spaceshipSprite.rotation, spaceshipStatistics.bulletSpeed)
+    }
+}
+
+function createBullet(x, y, direction, speed) {
+    var newBullet = createSprite(x, y, 20, 5)
+    newBullet.shapeColor = "red"
+    newBullet.rotateToDirection = true
+    newBullet.addSpeed((speed + newBullet.getSpeed()) * 2, direction)
+    allBullets.add(newBullet)
+    lastBulletFrame = frameCount
+}
+

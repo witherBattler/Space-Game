@@ -12,6 +12,8 @@ var spaceshipConfiguration = {
 }
 var spaceshipSprite
 var guiMapImage
+var lastBulletFrame = 0
+var allBullets
 
 function setup() {
     smooth()
@@ -59,6 +61,7 @@ function setup() {
     spaceshipSprite.scale = 0.2
     spaceshipSprite.maxSpeed = 20
     guiMapImage = createGraphics(200, 200)
+    allBullets = new Group()
 }
 
 function draw() {
@@ -70,6 +73,8 @@ function draw() {
             drawEndless()
     }
 }
+
+
 
 function mousePressed() {
     uiMousePressed()
