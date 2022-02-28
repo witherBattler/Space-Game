@@ -216,24 +216,40 @@ function roundToNearest(toRound, roundTo) {
 }
 
 function manageBulletCreation() {
-    if(keyIsDown(32)){
-        attemptBulletCreation()
+    if(keyIsDown(32) || mouseIsPressed){
+        attemptAttackCreation()
     }
 }
 
-function attemptBulletCreation() {
+function attemptAttackCreation() {
     if(Math.abs(lastBulletFrame - frameCount) > spaceshipStatistics.reloadTime) {
-        createBullet(spaceshipSprite.position.x, spaceshipSprite.position.y, spaceshipSprite.rotation, spaceshipStatistics.bulletSpeed)
+        createAttack(spaceshipSprite.position.x, spaceshipSprite.position.y, spaceshipStatistics.bulletSpeed)
     }
 }
 
-function createBullet(x, y, direction, speed) {
-    var newBullet = createSprite(x, y, 20, 5)
-    newBullet.shapeColor = "red"
-    newBullet.rotateToDirection = true
-    newBullet.addSpeed((speed + newBullet.getSpeed()) * 2, direction)
-    allBullets.add(newBullet)
-    lastBulletFrame = frameCount
+function createAttack(x, y, speed) {
+    switch(currentAttackType){
+        case "bullet":
+            var newBullet = createSprite(x, y, 20, 5)
+            newBullet.shapeColor = "red"
+            newBullet.rotateToDirection = true
+            newBullet.type = "bullet"
+            newBullet.addSpeed(speed + spaceshipSprite.getSpeed(), spaceshipSprite.rotation)
+            allAttackGroups.bullet.add(newBullet)
+            lastBulletFrame = frameCount
+            break
+        case "shield":
+            var newBullet = createSprite(x, y)
+            newBullet.addImage("shield", shieldAnimation)
+            newBullet.rotateToDirection = true
+            newBullet.addSpeed(speed + spaceshipSprite.getSpeed(), degrees(atan2(camera.mouseY - shield.position.y, camera.mouseX - shield.position.x)))
+            newBullet.scale = 1.2
+            allAttackGroups.shield.add(newBullet)
+            lastBulletFrame = frameCount
+            break;
+        default: 
+            throw new Error("Bad attack type (" + currentAttackType + ")")
+    }
 }
 
 function drawAllEnemies() {
@@ -287,4 +303,58 @@ function updateClawStriker(enemy) {
     } else {
         enemy.setSpeed(0)
     }
+}
+
+function drawAllAttacks() {
+    drawSprites(allAttackGroups.bullet)
+    if(currentAttackType == "shield"){
+        drawSprites(allAttackGroups.shield)
+    }
+}
+
+function updateAllAttacks() {
+    if(currentAttackType == "shield") {
+        shield.position.x = spaceshipSprite.position.x
+        shield.position.y = spaceshipSprite.position.y
+        shield.rotation = degrees(atan2(camera.mouseY - shield.position.y, camera.mouseX - shield.position.x))
+    }
+}
+
+function initiateShield() {
+    shield = createSprite(spaceshipSprite.position.x, spaceshipSprite.position.y)
+    shield.scale = 1.2
+    shield.addImage("shield", shieldAnimation)
+    allAttackGroups.shield.add(shield)
+}
+
+function randomlyGenerateEnemies() {
+    if(Math.random() < 0.01) {
+        generateRandomEnemy()
+    }
+}
+
+function generateRandomEnemy() {
+    var enemyToGenerate = random(["clawstriker"])
+    switch(enemyToGenerate) {
+        case "clawstriker":
+            createClawStriker(Math.random() * 4500 - 2250, Math.random() * 4500 - 2250)
+            break;
+        default: 
+            throw new Error("bad enemy to generate (" + enemyToGenerate + ")")
+    }
+}
+
+function getAllEnemiesLocations() {
+    var toReturn = []
+    for(var i = 0; i != allEnemiesGroups.length; i++) {
+        for(var x = 0; x != allEnemiesGroups[i].length; x++) {
+            toReturn.push(
+                {
+                    x: allEnemiesGroups[i][x].position.x,
+                    y: allEnemiesGroups[i][x].position.y
+                }
+            )
+        }
+    }
+    return toReturn
 }

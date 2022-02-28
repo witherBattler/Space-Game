@@ -16,6 +16,12 @@ var lastBulletFrame = 0
 var allBullets
 var allEnemiesGroups
 var allEnemiesAnimations
+var currentAttackType = "shield"
+//Defined in util
+var shield
+var shieldAnimation
+var shieldUsedAnimation
+
 
 function setup() {
     smooth()
@@ -64,12 +70,18 @@ function setup() {
     spaceshipSprite.maxSpeed = 20
     guiMapImage = createGraphics(200, 200)
     allBullets = new Group()
+    allAttackGroups = {
+        "bullet": new Group(),
+        "shield": new Group(),
+    }
     allEnemiesGroups = {
         clawStrikers: new Group(),
     }
     allEnemiesAnimations = {
         clawStrikers: loadImage("sprites/enemies/clawstriker.png")
     }
+    shieldAnimation = loadImage("sprites/shield.png", initiateShield)
+    shieldUsedAnimation = loadImage("sprites/shieldUsed.png")
 }
 
 function draw() {

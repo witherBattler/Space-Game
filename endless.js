@@ -3,12 +3,14 @@ function drawEndless() {
     //Not Visuals
     manageSpaceshipMovement(spaceshipStatistics)
     manageBulletCreation()
+    updateAllAttacks()
     updateAllEnemies()
+    randomlyGenerateEnemies()
 
     //Visuals 
     drawGameBackground(camera.position.x, camera.position.y)
     drawBorders()
-    drawSprites(allBullets)
+    drawAllAttacks()
     drawSprite(spaceshipSprite)
     drawAllEnemies()
     drawSpeedGUI()
