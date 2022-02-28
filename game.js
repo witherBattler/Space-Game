@@ -44,7 +44,7 @@ function setup() {
     }
     lockImage = loadImage("sprites/lock.png")
     mapArrowImage = loadImage("sprites/maparrow.png")
-    spaceshipSprite = createSprite(width / 2, 400)
+    spaceshipSprite = createSprite(0, 0)
     spaceshipSprite.addImage("Magma-cargoship", spaceshipImages["Magma"]["cargoship"])
     spaceshipSprite.addImage("Magma-carrier", spaceshipImages["Magma"]["carrier"])
     spaceshipSprite.addImage("Magma-cruiser", spaceshipImages["Magma"]["cruiser"])
