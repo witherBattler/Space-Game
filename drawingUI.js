@@ -13,7 +13,6 @@ var unlockedSpaceshipTypes = ["cargoship", "shuttlenoweps", "destroyer"]
 var allSpaceshipTypes = ["cargoship", "carrier", "cruiser", "destroyer", "shuttlenoweps"]
 
 
-
 function drawMenuUI() {
     //Background
     drawStarBackground()

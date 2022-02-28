@@ -21,6 +21,8 @@ var currentAttackType = "shield"
 var shield
 var shieldAnimation
 var shieldUsedAnimation
+var health = 100
+var lastDamageFrame = 0
 
 
 function setup() {

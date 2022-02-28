@@ -167,7 +167,7 @@ function drawSpeedGUI() {
     stroke("white")
     strokeWeight(5)
     rectMode(CORNER)
-    rect(-2.5, -2.5, 200, 60, 0, 0, 50, 0)
+    rect(-2.5, -2.5, 200, 60)
     textAlign(LEFT, TOP)
     noStroke()
     textFont(ethnocentric)
@@ -177,9 +177,25 @@ function drawSpeedGUI() {
     camera.on()
 }
 
-function updateMapGui() {
+function drawHealthGUI() {
     camera.off()
-    guiMapImage.clear()
+    fill("darkred")
+    stroke("white")
+    strokeWeight(5)
+    rectMode(CORNER)
+    rect(197.5, -2.5, 200, 60, 0, 0, 30, 0)
+    noStroke()
+    textFont(ethnocentric)
+    fill("white")
+    textSize(30)
+    text(Math.round(health) + "HP", 235, 10)
+    camera.on()
+}
+
+function updateMapGui() {
+    var enemiesPoints = getAllEnemiesLocations()
+    camera.off()
+    guiMapImage.background("#333333")
     guiMapImage.rectMode(CENTER)
     guiMapImage.noFill()
     guiMapImage.strokeWeight(6)
@@ -193,6 +209,11 @@ function updateMapGui() {
     guiMapImage.tint("yellow")
     guiMapImage.image(mapArrowImage, 0, 0, 20, 20) 
     guiMapImage.pop()
+    for(var i = 0; i != enemiesPoints.length; i++) {
+        guiMapImage.noStroke()
+        guiMapImage.fill("red")
+        guiMapImage.circle((enemiesPoints[i].x / 4500 * 200) + 100, (enemiesPoints[i].y / 4500 * 200) + 100, 5)
+    }
     camera.on()
 }
 
@@ -244,6 +265,7 @@ function createAttack(x, y, speed) {
             newBullet.rotateToDirection = true
             newBullet.addSpeed(speed + spaceshipSprite.getSpeed(), degrees(atan2(camera.mouseY - shield.position.y, camera.mouseX - shield.position.x)))
             newBullet.scale = 1.2
+            newBullet.trueShield = true
             allAttackGroups.shield.add(newBullet)
             lastBulletFrame = frameCount
             break;
@@ -259,10 +281,16 @@ function drawAllEnemies() {
 }
 
 function updateAllEnemies() {
+    var enemiesToDelete = []
     for(var i = 0; i != Object.keys(allEnemiesGroups).length; i++) {
         for(var x = 0; x != allEnemiesGroups[Object.keys(allEnemiesGroups)[i]].length; x++){
-            updateEnemy(allEnemiesGroups[Object.keys(allEnemiesGroups)[i]][x])
+            if(updateEnemy(allEnemiesGroups[Object.keys(allEnemiesGroups)[i]][x])) {
+                enemiesToDelete.push(allEnemiesGroups[Object.keys(allEnemiesGroups)[i]][x])
+            }
         }
+    }
+    for(var i = 0; i != enemiesToDelete.length; i++) {
+        enemiesToDelete[i].remove()
     }
 }
 
@@ -274,6 +302,8 @@ function createClawStriker(x, y) {
     clawStriker.enemyType = "clawStriker"
     clawStriker.addSpeed(6, degrees(atan2(spaceshipSprite.position.y - y, spaceshipSprite.position.x - x)))
     clawStriker.cooldown = 250
+    clawStriker.health = 100
+    clawStriker.initialHealth = 100
     allEnemiesGroups.clawStrikers.add(clawStriker)
 }
 
@@ -286,12 +316,16 @@ function updateEnemy(enemy) {
             throw new Error("Why is enemy type bad")
             break;
     }
+    if(updateEnemyHealth(enemy) == "enemy killed") {
+        return "enemy killed"
+    }
 }
 
 function updateClawStriker(enemy) {
     enemy.cooldown++
     if(enemy.overlap(spaceshipSprite)) {
         enemy.cooldown = 0
+        health -= 1
     }
     if(enemy.cooldown > 120) {
         if(dist(enemy.position.x, enemy.position.y, spaceshipSprite.position.x, spaceshipSprite.position.y) > 500) {
@@ -323,6 +357,7 @@ function updateAllAttacks() {
 function initiateShield() {
     shield = createSprite(spaceshipSprite.position.x, spaceshipSprite.position.y)
     shield.scale = 1.2
+    shield.trueShield = false
     shield.addImage("shield", shieldAnimation)
     allAttackGroups.shield.add(shield)
 }
@@ -346,15 +381,48 @@ function generateRandomEnemy() {
 
 function getAllEnemiesLocations() {
     var toReturn = []
-    for(var i = 0; i != allEnemiesGroups.length; i++) {
-        for(var x = 0; x != allEnemiesGroups[i].length; x++) {
+    for(var i = 0; i != Object.keys(allEnemiesGroups).length; i++) {
+        for(var x = 0; x != allEnemiesGroups[Object.keys(allEnemiesGroups)[i]].length; x++) {
             toReturn.push(
                 {
-                    x: allEnemiesGroups[i][x].position.x,
-                    y: allEnemiesGroups[i][x].position.y
+                    x: allEnemiesGroups[Object.keys(allEnemiesGroups)[i]][x].position.x,
+                    y: allEnemiesGroups[Object.keys(allEnemiesGroups)[i]][x].position.y
                 }
             )
         }
     }
     return toReturn
+}
+
+function regenerateHealth() {
+    if(Math.abs(lastDamageFrame - frameCount) > 180 && health < 100) {
+        health += 0.02
+        health = Math.min(100, health)
+    }
+}
+
+
+
+function updateEnemyHealth(enemy) {
+    l:
+    for(var i = 0; i != allAttackGroups.bullet.length; i--) {
+        if(allAttackGroups.bullet[i] == undefined) {
+            break l;
+        }
+        if(allAttackGroups.bullet[i].overlap(enemy)) {
+            enemy.health -= 80
+            if(enemy.health <= 0) {
+                return "enemy killed";
+            }
+        }
+    }
+    l:
+    for(var i = 0; i != allAttackGroups.shield.length; i++) {
+        if(!allAttackGroups.shield[i].removed && allAttackGroups.shield[i].trueShield && allAttackGroups.shield[i].overlap(enemy)) {
+            enemy.health -= 5
+            if(enemy.health <= 0) {
+                return "enemy killed";
+            }
+        }
+    }
 }

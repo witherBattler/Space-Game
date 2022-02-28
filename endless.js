@@ -6,6 +6,7 @@ function drawEndless() {
     updateAllAttacks()
     updateAllEnemies()
     randomlyGenerateEnemies()
+    regenerateHealth()
 
     //Visuals 
     drawGameBackground(camera.position.x, camera.position.y)
@@ -14,6 +15,7 @@ function drawEndless() {
     drawSprite(spaceshipSprite)
     drawAllEnemies()
     drawSpeedGUI()
+    drawHealthGUI()
     updateMapGui()
     drawMapGui()
 }
