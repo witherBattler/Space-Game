@@ -14,6 +14,8 @@ var spaceshipSprite
 var guiMapImage
 var lastBulletFrame = 0
 var allBullets
+var allEnemiesGroups
+var allEnemiesAnimations
 
 function setup() {
     smooth()
@@ -62,6 +64,12 @@ function setup() {
     spaceshipSprite.maxSpeed = 20
     guiMapImage = createGraphics(200, 200)
     allBullets = new Group()
+    allEnemiesGroups = {
+        clawStrikers: new Group(),
+    }
+    allEnemiesAnimations = {
+        clawStrikers: loadImage("sprites/enemies/clawstriker.png")
+    }
 }
 
 function draw() {

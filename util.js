@@ -236,3 +236,55 @@ function createBullet(x, y, direction, speed) {
     lastBulletFrame = frameCount
 }
 
+function drawAllEnemies() {
+    for(var i = 0; i != Object.keys(allEnemiesGroups).length; i++) {
+        drawSprites(allEnemiesGroups[Object.keys(allEnemiesGroups)[i]])
+    }
+}
+
+function updateAllEnemies() {
+    for(var i = 0; i != Object.keys(allEnemiesGroups).length; i++) {
+        for(var x = 0; x != allEnemiesGroups[Object.keys(allEnemiesGroups)[i]].length; x++){
+            updateEnemy(allEnemiesGroups[Object.keys(allEnemiesGroups)[i]][x])
+        }
+    }
+}
+
+function createClawStriker(x, y) {
+    var clawStriker = createSprite(x, y)
+    clawStriker.addImage("clawStriker", allEnemiesAnimations.clawStrikers)
+    clawStriker.scale = 0.3
+    clawStriker.changeAnimation("clawStriker")
+    clawStriker.enemyType = "clawStriker"
+    clawStriker.addSpeed(6, degrees(atan2(spaceshipSprite.position.y - y, spaceshipSprite.position.x - x)))
+    clawStriker.cooldown = 250
+    allEnemiesGroups.clawStrikers.add(clawStriker)
+}
+
+function updateEnemy(enemy) {
+    switch(enemy.enemyType) {
+        case "clawStriker":
+            updateClawStriker(enemy)
+            break;
+        default: 
+            throw new Error("Why is enemy type bad")
+            break;
+    }
+}
+
+function updateClawStriker(enemy) {
+    enemy.cooldown++
+    if(enemy.overlap(spaceshipSprite)) {
+        enemy.cooldown = 0
+    }
+    if(enemy.cooldown > 120) {
+        if(dist(enemy.position.x, enemy.position.y, spaceshipSprite.position.x, spaceshipSprite.position.y) > 500) {
+            enemy.setSpeed(4, degrees(atan2(spaceshipSprite.position.y - enemy.position.y, spaceshipSprite.position.x - enemy.position.x)))
+        } else {
+            enemy.setSpeed(6, degrees(atan2(spaceshipSprite.position.y - enemy.position.y, spaceshipSprite.position.x - enemy.position.x)))
+        }
+        enemy.rotation = degrees(atan2(spaceshipSprite.position.y - enemy.position.y, spaceshipSprite.position.x - enemy.position.x)) + 90
+    } else {
+        enemy.setSpeed(0)
+    }
+}
