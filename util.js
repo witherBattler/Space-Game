@@ -297,7 +297,7 @@ function updateAllEnemies() {
 function createClawStriker(x, y) {
     var clawStriker = createSprite(x, y)
     clawStriker.addImage("clawStriker", allEnemiesAnimations.clawStrikers)
-    clawStriker.scale = 0.3
+    clawStriker.scale = 0.6
     clawStriker.changeAnimation("clawStriker")
     clawStriker.enemyType = "clawStriker"
     clawStriker.addSpeed(6, degrees(atan2(spaceshipSprite.position.y - y, spaceshipSprite.position.x - x)))
@@ -329,9 +329,9 @@ function updateClawStriker(enemy) {
     }
     if(enemy.cooldown > 120) {
         if(dist(enemy.position.x, enemy.position.y, spaceshipSprite.position.x, spaceshipSprite.position.y) > 500) {
-            enemy.setSpeed(4, degrees(atan2(spaceshipSprite.position.y - enemy.position.y, spaceshipSprite.position.x - enemy.position.x)))
+            enemy.setSpeed(2, degrees(atan2(spaceshipSprite.position.y - enemy.position.y, spaceshipSprite.position.x - enemy.position.x)))
         } else {
-            enemy.setSpeed(6, degrees(atan2(spaceshipSprite.position.y - enemy.position.y, spaceshipSprite.position.x - enemy.position.x)))
+            enemy.setSpeed(4, degrees(atan2(spaceshipSprite.position.y - enemy.position.y, spaceshipSprite.position.x - enemy.position.x)))
         }
         enemy.rotation = degrees(atan2(spaceshipSprite.position.y - enemy.position.y, spaceshipSprite.position.x - enemy.position.x)) + 90
     } else {
@@ -358,12 +358,13 @@ function initiateShield() {
     shield = createSprite(spaceshipSprite.position.x, spaceshipSprite.position.y)
     shield.scale = 1.2
     shield.trueShield = false
+    shield.cooldown = 120
     shield.addImage("shield", shieldAnimation)
     allAttackGroups.shield.add(shield)
 }
 
 function randomlyGenerateEnemies() {
-    if(Math.random() < 0.01) {
+    if(Math.random() < 0.002) {
         generateRandomEnemy()
     }
 }
@@ -404,25 +405,40 @@ function regenerateHealth() {
 
 
 function updateEnemyHealth(enemy) {
-    l:
-    for(var i = 0; i != allAttackGroups.bullet.length; i--) {
-        if(allAttackGroups.bullet[i] == undefined) {
-            break l;
-        }
+    var bulletsToRemove = []
+    var enemyKilled = false
+    for(var i = 0; i != allAttackGroups.bullet.length; i++) {
         if(allAttackGroups.bullet[i].overlap(enemy)) {
-            enemy.health -= 80
+            enemy.health -= spaceshipStatistics.bulletDamage
+            bulletsToRemove.push(allAttackGroups.bullet[i])
             if(enemy.health <= 0) {
-                return "enemy killed";
+                enemyKilled = true
             }
         }
     }
-    l:
+    for(var i = 0; i != bulletsToRemove.length; i++) {
+        bulletsToRemove[i].remove()
+    }
+    if(enemyKilled) {
+        return "enemy killed";
+    }
+
+    var shieldsToRemove = []
+    var enemyKilled = false
     for(var i = 0; i != allAttackGroups.shield.length; i++) {
         if(!allAttackGroups.shield[i].removed && allAttackGroups.shield[i].trueShield && allAttackGroups.shield[i].overlap(enemy)) {
-            enemy.health -= 5
+            enemy.health -= spaceshipStatistics.bulletDamage
+            shieldsToRemove.push(allAttackGroups.shield[i])
             if(enemy.health <= 0) {
-                return "enemy killed";
+                enemyKilled = true
             }
         }
+    }
+    for(var i = 0; i != shieldsToRemove.length; i++) {
+        console.log(shieldsToRemove[i])
+        shieldsToRemove[i].remove()
+    }
+    if(enemyKilled) {
+        return "enemy killed";
     }
 }

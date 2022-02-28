@@ -16,7 +16,7 @@ var lastBulletFrame = 0
 var allBullets
 var allEnemiesGroups
 var allEnemiesAnimations
-var currentAttackType = "shield"
+var currentAttackType = "bullet"
 //Defined in util
 var shield
 var shieldAnimation
