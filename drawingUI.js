@@ -80,7 +80,6 @@ function drawMenuUI() {
     var currentSpaceshipImage = getSpaceshipImage(spaceshipConfiguration.type, spaceshipConfiguration.power)
     image(currentSpaceshipImage, 600, 400, currentSpaceshipImage.width / 2, currentSpaceshipImage.height / 2)
 
-    
     var stats = getSpaceshipStatistics(spaceshipConfiguration.type, spaceshipConfiguration.power)
     noStroke()
     rectMode(CORNER)
@@ -107,14 +106,6 @@ function drawMenuUI() {
     text("Reload Time", 760 + stats.reloadTime / 120 * 400, 396 + 50)
 }
 
-function drawStarBackground() {
-    starsScroll += 3
-    if(starsScroll >= 500) {
-        starsScroll = 0
-    }
-    image(starBackground, 0, starsScroll - 500)
-    image(starBackground, 0, starsScroll)
-}
 
 function uiMousePressed () {
     switch(stage) {
@@ -142,6 +133,8 @@ function uiMousePressed () {
             }
             if(mouseOverRect(45, 32, 200, 60, "corner")) {
                 stage = "endless"
+                cursor("default")
+                setupEndless()
             }
             break;
     }
